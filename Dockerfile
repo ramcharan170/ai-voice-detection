@@ -1,4 +1,4 @@
-FROM node:18-bullseye
+FROM node:20-bookworm
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y \
     python3-venv \
     ffmpeg \
     libsndfile1 \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 # Create app directory
