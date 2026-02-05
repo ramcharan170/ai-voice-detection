@@ -51,6 +51,7 @@ def get_voice_signatures(y, sr):
 def main():
     if len(sys.argv) < 2: return
     file_path = sys.argv[1]
+    language = sys.argv[2] if len(sys.argv) > 2 else "Unknown"
 
     try:
         model = joblib.load(MODEL_PATH)
@@ -81,12 +82,15 @@ def main():
             is_ai = False
             reason = "Biological vocal jitter and natural harmonic complexity detected."
 
+        # Calculate confidence using sigmoid on the absolute decision function value
+        # This maps the distance to a 0.5-1.0 range, representing confidence in the classification
+        confidence_score = 1 / (1 + np.exp(-np.abs(raw_score)))
+
         print(json.dumps({
             "status": "success",
+            "language": language,
             "classification": "AI_GENERATED" if is_ai else "HUMAN",
-            "confidenceScore": round(91.2 + abs(raw_score), 2),
-            "raw_score": round(float(raw_score), 4),
-            "vocal_entropy": round(float(entropy), 3),
+            "confidenceScore": round(float(confidence_score), 4),
             "explanation": reason
         }))
 

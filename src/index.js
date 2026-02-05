@@ -24,8 +24,10 @@ app.post('/api/voice-detection', (req, res) => {
         const base64Data = audioBase64.replace(/^data:audio\/\w+;base64,/, "");
         fs.writeFileSync(tempPath, Buffer.from(base64Data, 'base64'));
 
-        // Use 'python3' as installed in the Dockerfile
-        const pythonProcess = spawn('python3', [
+        // Determine Python command based on OS
+        const pythonCommand = process.platform === "win32" ? "python" : "python3";
+
+        const pythonProcess = spawn(pythonCommand, [
             path.join(__dirname, '../ai_engine/bridge.py'),
             tempPath,
             language || "Unknown"
